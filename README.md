@@ -1,158 +1,170 @@
-# TwinShield: Uncertainty-Aware Network Digital Twin for Safe Multi-Flow Network Control
+# TWINSHIELD: Uncertainty-Aware Digital Twin for Safe Network Control
 
 ## Overview
 
-**TwinShield** is a research-oriented framework for intelligent and risk-aware network management using a **Network Digital Twin**.
+**TWINSHIELD** is a research-oriented framework for **predictive, uncertainty-aware, and safety-conscious network management** using a Network Digital Twin.
 
-Modern networks are highly dynamic: congestion, changing traffic patterns, resource contention, and failures can cause Service-Level Agreement (SLA) violations. Traditional reactive approaches generally respond after degradation has already occurred and often optimize the affected flow without considering the impact on other flows.
+Modern networks operate under continuously changing traffic conditions. Congestion, resource contention, workload interactions, and failures can cause Service-Level Agreement (SLA) violations. Traditional reactive approaches generally respond after degradation has occurred and may improve one flow while unintentionally harming other flows.
 
-TwinShield addresses this problem by combining:
+TWINSHIELD addresses this challenge by combining:
 
 * **Network Digital Twin simulation**
-* **Multi-flow telemetry**
+* **Multi-flow network telemetry**
 * **Machine learning-based outcome prediction**
 * **Uncertainty estimation and calibration**
 * **Counterfactual what-if evaluation**
 * **Risk-aware action selection**
 * **Multi-flow safety constraints**
-* **Explainable decisions**
+* **Explainable network decisions**
 
-The central objective is:
+The central idea is:
 
-> **Predict what is likely to happen, quantify how uncertain that prediction is, evaluate possible interventions, and select an action only when it is safe for the network as a whole.**
+> **Predict future network behavior, quantify uncertainty, evaluate possible interventions before execution, and select an action only when its predicted impact remains safe for the network as a whole.**
 
 ---
 
 ## Research Problem
 
-Given a dynamic network state containing multiple interacting flows, SAFE-Twin aims to answer:
+Given a dynamic network state containing multiple interacting flows, TWINSHIELD aims to answer:
 
-> **Which network action should be taken when a flow is approaching an SLA violation, while ensuring that the intervention does not create unacceptable risk for other flows?**
+> **How can a network anticipate an upcoming SLA violation and choose an intervention that improves the target flow without introducing unacceptable risk to other flows?**
 
-This requires moving beyond a simple:
+Instead of relying on a purely reactive approach:
 
 ```text
 Detect → React
 ```
 
-towards:
+TWINSHIELD follows:
 
 ```text
-Observe → Predict → Quantify Uncertainty → What-If → Check Safety → Act
+Observe
+   ↓
+Predict
+   ↓
+Quantify Uncertainty
+   ↓
+Evaluate What-If Outcomes
+   ↓
+Check Multi-Flow Safety
+   ↓
+Act / Reject / Abstain
+   ↓
+Observe Updated State
 ```
 
 ---
 
-## Proposed Architecture
+# System Architecture
 
 ```text
-                Real / Simulated Network
-                         │
-                         ▼
+                    Network Environment
+                           │
+                           ▼
                   Network Telemetry
-                         │
-                         ▼
-              ┌──────────────────────┐
-              │   Digital Twin       │
-              │  Current Network     │
-              │       State          │
-              └──────────┬───────────┘
-                         │
-                         ▼
-              ┌──────────────────────┐
-              │ Outcome Prediction   │
-              │                      │
-              │ Delay / Loss / QoS   │
-              │ SLA Violation Risk   │
-              └──────────┬───────────┘
-                         │
-                         ▼
-              ┌──────────────────────┐
-              │ Uncertainty &        │
-              │ Calibration          │
-              └──────────┬───────────┘
-                         │
-                         ▼
-              Candidate Interventions
-                         │
-                         ▼
-              ┌──────────────────────┐
-              │ Counterfactual       │
-              │ What-If Evaluation   │
-              └──────────┬───────────┘
-                         │
-                         ▼
-              ┌──────────────────────┐
-              │ Risk-Aware Decision  │
-              │ Engine               │
-              │                      │
-              │ Multi-flow Safety    │
-              │ Constraints          │
-              └──────────┬───────────┘
-                         │
-                    ┌────┴────┐
-                    ▼         ▼
-                  ACCEPT    REJECT/
-                             ABSTAIN
+                           │
+                           ▼
+              ┌────────────────────────┐
+              │    Network Digital     │
+              │         Twin           │
+              │                        │
+              │ Current Network State  │
+              └───────────┬────────────┘
+                          │
+                          ▼
+              ┌────────────────────────┐
+              │   ML Outcome Predictor │
+              │                        │
+              │ Delay / Loss / QoS     │
+              │ SLA Violation Risk     │
+              └───────────┬────────────┘
+                          │
+                          ▼
+              ┌────────────────────────┐
+              │ Uncertainty Estimation │
+              │    & Calibration       │
+              └───────────┬────────────┘
+                          │
+                          ▼
+                 Candidate Actions
+                          │
+                          ▼
+              ┌────────────────────────┐
+              │ Counterfactual         │
+              │ What-If Evaluation     │
+              └───────────┬────────────┘
+                          │
+                          ▼
+              ┌────────────────────────┐
+              │ TWINSHIELD Safety       │
+              │ Decision Engine        │
+              │                        │
+              │ Multi-Flow Constraints │
+              └───────────┬────────────┘
+                          │
+                    ┌─────┴─────┐
+                    ▼           ▼
+                 ACCEPT     REJECT / ABSTAIN
                     │
                     ▼
               Execute Action
                     │
                     ▼
-             Network State Update
+              Network State Update
                     │
-                    └──────────► Digital Twin
+                    └──────────────► Digital Twin
 ```
 
 ---
 
-## Key Idea
+# Core Concept
 
-A network intervention should not be considered successful merely because it improves the target flow.
+TWINSHIELD does **not** judge an intervention solely by whether it improves the flow currently experiencing degradation.
 
-For every candidate action, SAFE-Twin evaluates:
+For every candidate action, the framework considers:
 
 1. **Target-flow improvement**
 2. **Impact on other flows**
 3. **Probability of SLA violations**
 4. **Uncertainty in predicted outcomes**
-5. **Network-level safety constraints**
+5. **Network-level constraints**
 
-An action may therefore be:
+Consequently, an action can result in one of three decisions:
 
-* **Accepted** — predicted to satisfy safety constraints
-* **Rejected** — predicted to violate one or more constraints
-* **Abstained** — uncertainty is too high to make a reliable decision
+| Decision    | Meaning                                                                     |
+| ----------- | --------------------------------------------------------------------------- |
+| **Accept**  | The action is predicted to satisfy the required safety constraints          |
+| **Reject**  | The action is predicted to violate one or more safety constraints           |
+| **Abstain** | Prediction uncertainty is too high to make a sufficiently reliable decision |
 
-This makes the system **risk-aware rather than purely performance-driven**.
+The **abstention mechanism** is particularly important because uncertainty should not simply be ignored when an automated system is making network-control decisions.
 
 ---
 
-## Methodology
+# TWINSHIELD Workflow
 
-### 1. Network Digital Twin
+## 1. Observe
 
-A virtual representation of the network is maintained using network simulation and telemetry.
+The Digital Twin receives the current network state through simulated or collected telemetry.
 
-The Digital Twin captures information such as:
+Relevant state information includes:
 
 * Network topology
 * Link utilization
 * Queue occupancy
-* Flow characteristics
+* Flow rates
 * Delay
 * Packet loss
 * Throughput
 * Resource utilization
+* Flow priority
 * SLA requirements
-
-Dynamic scenarios are generated to represent realistic network conditions including congestion, resource pressure, and changing traffic demands.
 
 ---
 
-### 2. Outcome Prediction
+## 2. Predict
 
-Machine learning models learn the relationship between the current network state and future network outcomes.
+Machine learning models estimate future network outcomes from the current state.
 
 The prediction component can estimate:
 
@@ -162,82 +174,176 @@ The prediction component can estimate:
 * SLA violation probability
 * Time-to-SLA violation
 
-Multiple prediction approaches are evaluated against simple baselines to determine whether the proposed modeling approach provides meaningful improvements.
+Multiple predictive models and baselines are evaluated to determine the effectiveness of the proposed approach.
 
 ---
 
-### 3. Uncertainty Estimation
+## 3. Quantify Uncertainty
 
-A prediction without confidence information can be dangerous in a control system.
+A point prediction alone does not indicate how trustworthy that prediction is.
 
-SAFE-Twin therefore incorporates uncertainty estimation to distinguish between:
+TWINSHIELD therefore incorporates uncertainty estimation to distinguish between:
 
 ```text
-High-confidence prediction
+Reliable prediction
         vs.
-Highly uncertain prediction
+Uncertain prediction
 ```
 
-Prediction intervals, probabilistic risk estimates, and calibration techniques are used to determine whether the model's confidence is reliable.
+Prediction intervals and probabilistic risk estimates are evaluated using appropriate calibration techniques.
+
+The objective is not simply to make predictions, but to determine **when those predictions are reliable enough to support an intervention**.
 
 ---
 
-### 4. Counterfactual What-If Evaluation
+## 4. Generate Candidate Actions
 
-Before executing an intervention, SAFE-Twin evaluates possible alternatives inside the Digital Twin.
+When degradation is predicted, possible interventions are generated.
+
+The initial action space focuses on feasible network interventions such as:
+
+* Alternative-path rerouting
+* Traffic redistribution
+* Resource adjustment
+
+The framework can be extended with additional control actions as the research progresses.
+
+---
+
+## 5. Perform Counterfactual What-If Evaluation
+
+Before executing an action, TWINSHIELD evaluates its potential consequences inside the Digital Twin.
 
 For example:
 
 ```text
-Current State
-     │
-     ├── Continue
-     │
-     ├── Reroute Flow
-     │
-     └── Other Candidate Action
-              │
-              ▼
-        Simulated Outcomes
-              │
-              ▼
-       Safety Evaluation
+Current Network State
+        │
+        ├── Continue
+        │
+        ├── Reroute Flow
+        │
+        └── Other Candidate Action
+                 │
+                 ▼
+          Simulated Future
+                 │
+                 ▼
+          Safety Evaluation
 ```
 
-This allows the system to estimate the consequences of an action before applying it to the actual network.
+This allows the system to investigate:
+
+> **“What is likely to happen if this action is applied?”**
+
+before committing the action to the network.
 
 ---
 
-### 5. Risk-Aware Decision Making
+# Multi-Flow Safety
 
-Candidate actions are evaluated using predicted outcomes and their uncertainty.
+A key principle of TWINSHIELD is that **local improvement should not come at the cost of unacceptable global degradation**.
 
-A simplified safety requirement is:
+For a flow \(f\) and candidate action \(a\), a simplified safety constraint can be expressed as:
 
 $$
 P(\text{SLA violation}_f \mid a) \leq \epsilon_f
 $$
 
-for every relevant flow \(f\).
+where:
 
-Therefore, an action that improves one flow but creates excessive risk for another can be rejected.
+* \(P(\text{SLA violation}_f \mid a)\) is the predicted probability of violating the SLA,
+* \(\epsilon_f\) is the maximum acceptable risk for flow \(f\).
+
+Therefore, an intervention that improves the target flow but significantly increases the risk of another flow can be rejected.
 
 ---
 
-## Experimental Evaluation
+# Risk-Aware Decision Making
 
-SAFE-Twin is evaluated against progressively stronger baselines.
+TWINSHIELD combines predicted outcomes, uncertainty, and safety constraints to select an intervention.
 
-### Baselines
+Conceptually:
 
-* Reactive threshold-based control
-* Predict-and-act without safety constraints
-* Point-estimate constrained decision making
-* Uncertainty-aware SAFE-Twin
+```text
+Candidate Actions
+       │
+       ▼
+Predicted Outcomes
+       │
+       ▼
+Uncertainty Estimates
+       │
+       ▼
+Multi-Flow Risk Analysis
+       │
+       ▼
+Safety Constraints
+       │
+       ├───────────────┐
+       ▼               ▼
+    ACCEPT        REJECT / ABSTAIN
+       │
+       ▼
+ Execute Action
+```
 
-### Evaluation Metrics
+This transforms the problem from:
 
-#### Prediction
+> **“Which action gives the highest immediate performance?”**
+
+into:
+
+> **“Which action provides useful improvement while remaining within acceptable network-wide risk?”**
+
+---
+
+# Explainable Decisions
+
+TWINSHIELD is designed to provide an explanation alongside the final decision.
+
+For example:
+
+```text
+Decision: REJECT
+
+Reason:
+Rerouting Flow F3 improves its predicted SLA risk,
+but increases Flow F7's risk beyond its permitted threshold.
+
+Binding constraint:
+F7 latency SLA
+
+Target-flow risk:
+87% → 19%
+
+Affected-flow risk:
+12% → 68%
+
+Result:
+Action rejected due to collateral risk.
+```
+
+This makes the decision process more interpretable and allows researchers to identify **which constraint caused an intervention to be rejected**.
+
+---
+
+# Experimental Evaluation
+
+TWINSHIELD is evaluated against progressively stronger baselines.
+
+## Baselines
+
+1. **Reactive threshold-based control**
+2. **Predict-and-act without safety constraints**
+3. **Point-estimate constrained decision making**
+4. **Uncertainty-aware TWINSHIELD**
+
+---
+
+## Evaluation Metrics
+
+### Prediction Performance
 
 * MAE
 * RMSE
@@ -245,7 +351,7 @@ SAFE-Twin is evaluated against progressively stronger baselines.
 * Calibration error
 * SLA-risk prediction performance
 
-#### Network Performance
+### Network Performance
 
 * SLA violation rate
 * Average delay
@@ -253,14 +359,14 @@ SAFE-Twin is evaluated against progressively stronger baselines.
 * Throughput
 * Recovery time
 
-#### Safety
+### Safety
 
 * Constraint violation rate
-* Collateral damage to unaffected flows
 * Unsafe action rate
+* Collateral degradation
 * Abstention rate
 
-#### Decision Quality
+### Decision Quality
 
 * Successful interventions
 * Target-flow improvement
@@ -269,29 +375,27 @@ SAFE-Twin is evaluated against progressively stronger baselines.
 
 ---
 
-## Research Questions
+# Research Questions
 
-The project investigates the following questions:
+### RQ1 — Predictive Capability
 
-### RQ1 — Prediction
-
-Can a Digital Twin combined with machine learning accurately predict future network outcomes before an SLA violation occurs?
+Can a Network Digital Twin combined with machine learning accurately predict future network outcomes before SLA degradation occurs?
 
 ### RQ2 — Uncertainty
 
-Does incorporating calibrated uncertainty improve the reliability of network-control decisions?
+Does calibrated uncertainty improve the reliability of automated network-control decisions?
 
 ### RQ3 — Safety
 
-Can risk-aware multi-flow constraints reduce collateral degradation caused by network interventions?
+Can multi-flow risk constraints reduce collateral degradation caused by network interventions?
 
-### RQ4 — Decision Making
+### RQ4 — Decision Quality
 
-Does SAFE-Twin achieve a better balance between performance improvement and network-wide safety than reactive and unconstrained approaches?
+Does TWINSHIELD provide a better balance between network performance and safety compared with reactive and unconstrained approaches?
 
 ---
 
-## Technology Stack
+# Technology Stack
 
 | Component          | Technology                        |
 | ------------------ | --------------------------------- |
@@ -300,37 +404,48 @@ Does SAFE-Twin achieve a better balance between performance improvement and netw
 | Machine Learning   | Scikit-learn / PyTorch            |
 | Data Processing    | Pandas / NumPy                    |
 | Graph Modeling     | PyTorch Geometric *(if required)* |
-| Experimentation    | Python-based experiment pipeline  |
+| Experimentation    | Python                            |
 | Version Control    | Git / GitHub                      |
 
 ---
 
-## Repository Structure
+# Repository Structure
 
 ```text
-SAFE-Twin/
+TWINSHIELD/
 │
 ├── simulation/          # Network simulation and telemetry
+│
 ├── prediction/          # ML prediction and uncertainty
-├── actions/             # Candidate interventions
+│
+├── actions/             # Candidate network interventions
+│
 ├── twin_evaluator/      # Counterfactual what-if evaluation
+│
 ├── safety/              # Risk-aware decision engine
+│
 ├── explainability/      # Decision explanations
+│
 ├── experiments/         # Baselines and experiments
+│
 ├── configs/             # Experiment configurations
+│
 ├── data/                # Dataset organization
+│
 ├── tests/               # Unit and integration tests
+│
 ├── notebooks/           # Analysis and visualization
+│
 └── docs/                # Research documentation
 ```
 
 ---
 
-## Expected Contribution
+# Research Contribution
 
-SAFE-Twin aims to contribute a unified framework for **prediction-driven and safety-aware network control**.
+TWINSHIELD aims to provide an integrated framework for **prediction-driven and safety-aware network control**.
 
-The key contribution is the integration of:
+The core research pipeline is:
 
 ```text
 Network Digital Twin
@@ -342,17 +457,19 @@ Uncertainty Estimation
 Counterfactual Evaluation
         +
 Multi-Flow Safety Constraints
-        =
+        ↓
+TWINSHIELD
+        ↓
 Risk-Aware Network Control
 ```
 
-Rather than optimizing network performance in isolation, the framework explicitly considers **uncertainty, intervention consequences, and collateral effects across multiple flows**.
+The framework therefore moves beyond conventional reactive network management by considering **future behavior, uncertainty, intervention consequences, and cross-flow safety simultaneously**.
 
 ---
 
-## Reproducibility
+# Reproducibility
 
-All experiments are designed to be reproducible through:
+The project is designed around reproducible experimentation through:
 
 * Configurable network scenarios
 * Automated dataset generation
@@ -364,26 +481,49 @@ All experiments are designed to be reproducible through:
 
 ---
 
-## Project Status
+# Project Status
 
 🚧 **Research Prototype — Under Development**
 
-Current development focuses on building the Digital Twin, generating dynamic multi-flow network scenarios, developing predictive models, and integrating uncertainty-aware safety-constrained decision making.
+Current development focuses on:
+
+* Dynamic multi-flow network simulation
+* Digital Twin state representation
+* Dataset generation
+* ML-based outcome prediction
+* Uncertainty estimation
+* Counterfactual action evaluation
+* Risk-aware multi-flow decision making
+* Experimental evaluation
 
 ---
 
-## Team
+# Team
 
-**Tanya Rastogi**
-Prediction, uncertainty estimation, and risk modeling
+### Tanya Rastogi
 
-**Ananya Ambastha**
-Network simulation, dynamic state evolution, action execution, evaluation, and integration
+**Primary focus:**
+ML outcome prediction, uncertainty estimation, and risk-aware modeling.
 
-Both contributors collaborate on research design, experimentation, analysis, and documentation.
+### Ananya Ambastha
+
+**Primary focus:**
+Network simulation, dynamic state evolution, action execution, counterfactual evaluation, and experimental evaluation.
+
+### Joint Research
+
+Both contributors collaborate on:
+
+* Research design
+* System integration
+* Experimental methodology
+* Analysis
+* Ablation studies
+* Paper writing
+* Documentation
 
 ---
 
 ## Disclaimer
 
-SAFE-Twin is a research prototype intended for experimentation and evaluation of intelligent network-management techniques. It is not intended to directly control production network infrastructure.
+TWINSHIELD is a research prototype intended for experimentation and evaluation of intelligent network-management techniques. It is not intended for direct deployment on production network infrastructure.
