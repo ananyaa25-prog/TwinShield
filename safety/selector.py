@@ -1,32 +1,44 @@
-from safety.constraints import SafetyConstraint
+from safety.constraints import SafetyConstraint, AbstentionPolicy
 
 
 class SafetySelector:
     """
-    Selects whether a candidate action should be accepted
-    or rejected based on target-flow improvement and
-    protected-flow safety constraints.
+    Selects whether a candidate action should be accepted,
+    rejected, or marked for abstention.
+
+    Decision logic:
+    1. The target flow must improve.
+    2. Protected-flow safety constraints must remain satisfied.
+    3. Relevant prediction uncertainty must be within the
+       configured limit.
     """
 
     def __init__(self, uncertainty_limit=0.30):
         self.uncertainty_limit = uncertainty_limit
+        self.abstention_policy = AbstentionPolicy(
+            uncertainty_limit=uncertainty_limit
+        )
 
     def evaluate(
         self,
         target_flow,
         risk_before,
         risk_after,
-        protected_flows
+        protected_flows,
+        target_uncertainty=None
     ):
         """
         Evaluate one candidate action.
 
         Parameters:
             target_flow: ID of the flow being improved.
-            risk_before: Target flow risk before action.
-            risk_after: Target flow risk after action.
-            protected_flows: Dictionary containing risk information
-                             for other flows.
+            risk_before: Target flow risk before the action.
+            risk_after: Target flow risk after the action.
+            protected_flows: Dictionary containing risk and
+                             optional uncertainty information
+                             for protected flows.
+            target_uncertainty: Optional uncertainty associated
+                                with the target-flow prediction.
 
         Returns:
             A dictionary containing the final decision.
@@ -44,7 +56,7 @@ class SafetySelector:
             }
 
         # ---------------------------------------------------------
-        # 2. Check every protected flow
+        # 2. Check every protected flow's safety constraint
         # ---------------------------------------------------------
 
         violated_flows = []
@@ -71,7 +83,6 @@ class SafetySelector:
         # ---------------------------------------------------------
 
         if violated_flows:
-
             return {
                 "status": "reject",
                 "reason": "Protected flow safety constraint violated",
@@ -82,12 +93,73 @@ class SafetySelector:
             }
 
         # ---------------------------------------------------------
-        # 4. Otherwise accept the action
+        # 4. Check target-flow uncertainty, if provided
+        # ---------------------------------------------------------
+
+        if target_uncertainty is not None:
+            target_abstention = self.abstention_policy.evaluate(
+                target_uncertainty
+            )
+
+            if target_abstention["status"] == "abstain":
+                return {
+                    "status": "abstain",
+                    "reason": "Target-flow prediction uncertainty is too high",
+                    "target_flow": target_flow,
+                    "target_risk_before": risk_before,
+                    "target_risk_after": risk_after,
+                    "target_uncertainty": target_uncertainty,
+                    "uncertainty_limit": self.uncertainty_limit,
+                    "violated_flows": []
+                }
+
+        # ---------------------------------------------------------
+        # 5. Check protected-flow uncertainty, if provided
+        # ---------------------------------------------------------
+
+        uncertain_flows = []
+
+        for flow_id, information in protected_flows.items():
+
+            uncertainty = information.get("uncertainty")
+
+            # Preserve backward compatibility when uncertainty
+            # is not included for a protected flow.
+            if uncertainty is None:
+                continue
+
+            abstention_result = self.abstention_policy.evaluate(
+                uncertainty
+            )
+
+            if abstention_result["status"] == "abstain":
+                uncertain_flows.append({
+                    "flow_id": flow_id,
+                    "uncertainty": uncertainty,
+                    "uncertainty_limit": self.uncertainty_limit
+                })
+
+        if uncertain_flows:
+            return {
+                "status": "abstain",
+                "reason": "Protected-flow prediction uncertainty is too high",
+                "target_flow": target_flow,
+                "target_risk_before": risk_before,
+                "target_risk_after": risk_after,
+                "uncertain_flows": uncertain_flows,
+                "violated_flows": []
+            }
+
+        # ---------------------------------------------------------
+        # 6. Accept if all checks pass
         # ---------------------------------------------------------
 
         return {
             "status": "accept",
-            "reason": "Target flow improves and all protected flows remain safe",
+            "reason": (
+                "Target flow improves, all protected flows remain safe, "
+                "and prediction uncertainty is acceptable"
+            ),
             "target_flow": target_flow,
             "target_risk_before": risk_before,
             "target_risk_after": risk_after,

@@ -121,3 +121,20 @@ def predict_risk(model, telemetry_row):
         "decision_status": decision_status,
         "model_type": "calibrated_logistic_regression",
     }
+
+def predict_sla_risk(model, telemetry_row):
+    """
+    Return the predicted SLA-violation risk in a compact format
+    suitable for integration with the action evaluator.
+    """
+    prediction = predict_risk(model, telemetry_row)
+
+    return {
+        "predicted_sla_violation_probability": (
+            prediction["predicted_sla_violation_probability"]
+        ),
+        "risk_category": prediction["risk_category"],
+        "uncertainty_score": prediction["uncertainty_score"],
+        "confidence_score": prediction["confidence_score"],
+        "decision_status": prediction["decision_status"],
+    }
