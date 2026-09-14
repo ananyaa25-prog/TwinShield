@@ -1,0 +1,28 @@
+scenario_id,flow_id,strategy,action_id,old_path,new_path,risk_before,predicted_risk_after,uncertainty,actual_risk_after,actual_risk_reduction,decision,reason
+background_surge,f1,naive,reroute_f1_path_1,"['n1', 'n2', 'n4']","['n1', 'n3', 'n4']",0.4733,,,0.34,0.13329999999999997,accept,First valid alternate route selected
+background_surge,f1,prediction_only,reroute_f1_path_1,"['n1', 'n2', 'n4']","['n1', 'n3', 'n4']",0.4733,0.128334,0.256669,0.34,0.13329999999999997,accept,Action with lowest predicted risk selected
+background_surge,f1,twinshield,reroute_f1_path_1,"['n1', 'n2', 'n4']","['n1', 'n3', 'n4']",0.4733,0.128334,0.256669,0.34,0.13329999999999997,accept,"Target flow improves, all protected flows remain safe, and prediction uncertainty is acceptable"
+background_surge,f2,naive,reroute_f2_path_1,"['n1', 'n3', 'n4']","['n1', 'n2', 'n4']",0.2833,,,1.0,-0.7167,accept,First valid alternate route selected
+background_surge,f2,prediction_only,reroute_f2_path_1,"['n1', 'n3', 'n4']","['n1', 'n2', 'n4']",0.2833,0.994702,0.010596,1.0,-0.7167,accept,Action with lowest predicted risk selected
+background_surge,f2,twinshield,reroute_f2_path_1,"['n1', 'n3', 'n4']","['n1', 'n2', 'n4']",0.2833,0.994702,0.010596,1.0,-0.7167,reject,Target flow does not improve
+background_surge,f3,naive,reroute_f3_path_1,"['n2', 'n5', 'n6']","['n2', 'n4', 'n5', 'n6']",1.0,,,1.0,0.0,accept,First valid alternate route selected
+background_surge,f3,prediction_only,reroute_f3_path_2,"['n2', 'n5', 'n6']","['n2', 'n1', 'n3', 'n4', 'n5', 'n6']",1.0,0.155736,0.311473,0.4375,0.5625,accept,Action with lowest predicted risk selected
+background_surge,f3,twinshield,reroute_f3_path_2,"['n2', 'n5', 'n6']","['n2', 'n1', 'n3', 'n4', 'n5', 'n6']",1.0,0.155736,0.311473,0.4375,0.5625,abstain,Target-flow prediction uncertainty is too high
+normal,f1,naive,reroute_f1_path_1,"['n1', 'n2', 'n4']","['n1', 'n3', 'n4']",0.4733,,,0.34,0.13329999999999997,accept,First valid alternate route selected
+normal,f1,prediction_only,reroute_f1_path_1,"['n1', 'n2', 'n4']","['n1', 'n3', 'n4']",0.4733,0.128334,0.256669,0.34,0.13329999999999997,accept,Action with lowest predicted risk selected
+normal,f1,twinshield,reroute_f1_path_1,"['n1', 'n2', 'n4']","['n1', 'n3', 'n4']",0.4733,0.128334,0.256669,0.34,0.13329999999999997,accept,"Target flow improves, all protected flows remain safe, and prediction uncertainty is acceptable"
+normal,f2,naive,reroute_f2_path_1,"['n1', 'n3', 'n4']","['n1', 'n2', 'n4']",0.2833,,,1.0,-0.7167,accept,First valid alternate route selected
+normal,f2,prediction_only,reroute_f2_path_2,"['n1', 'n3', 'n4']","['n1', 'n2', 'n5', 'n4']",0.2833,0.05248,0.104959,0.4667,-0.1834,accept,Action with lowest predicted risk selected
+normal,f2,twinshield,reroute_f2_path_2,"['n1', 'n3', 'n4']","['n1', 'n2', 'n5', 'n4']",0.2833,0.05248,0.104959,0.4667,-0.1834,abstain,Protected-flow prediction uncertainty is too high
+normal,f3,naive,reroute_f3_path_1,"['n2', 'n5', 'n6']","['n2', 'n4', 'n5', 'n6']",0.275,,,1.0,-0.725,accept,First valid alternate route selected
+normal,f3,prediction_only,reroute_f3_path_2,"['n2', 'n5', 'n6']","['n2', 'n1', 'n3', 'n4', 'n5', 'n6']",0.275,0.155736,0.311473,0.4375,-0.16249999999999998,accept,Action with lowest predicted risk selected
+normal,f3,twinshield,reroute_f3_path_2,"['n2', 'n5', 'n6']","['n2', 'n1', 'n3', 'n4', 'n5', 'n6']",0.275,0.155736,0.311473,0.4375,-0.16249999999999998,abstain,Target-flow prediction uncertainty is too high
+shared_bottleneck,f1,naive,reroute_f1_path_1,"['n1', 'n2', 'n4']","['n1', 'n3', 'n4']",1.0,,,0.34,0.6599999999999999,accept,First valid alternate route selected
+shared_bottleneck,f1,prediction_only,reroute_f1_path_1,"['n1', 'n2', 'n4']","['n1', 'n3', 'n4']",1.0,0.128334,0.256669,0.34,0.6599999999999999,accept,Action with lowest predicted risk selected
+shared_bottleneck,f1,twinshield,reroute_f1_path_1,"['n1', 'n2', 'n4']","['n1', 'n3', 'n4']",1.0,0.128334,0.256669,0.34,0.6599999999999999,accept,"Target flow improves, all protected flows remain safe, and prediction uncertainty is acceptable"
+shared_bottleneck,f2,naive,reroute_f2_path_1,"['n1', 'n3', 'n4']","['n1', 'n2', 'n4']",0.2833,,,1.0,-0.7167,accept,First valid alternate route selected
+shared_bottleneck,f2,prediction_only,reroute_f2_path_2,"['n1', 'n3', 'n4']","['n1', 'n2', 'n5', 'n4']",0.2833,0.05248,0.104959,0.4667,-0.1834,accept,Action with lowest predicted risk selected
+shared_bottleneck,f2,twinshield,reroute_f2_path_2,"['n1', 'n3', 'n4']","['n1', 'n2', 'n5', 'n4']",0.2833,0.05248,0.104959,0.4667,-0.1834,accept,"Target flow improves, all protected flows remain safe, and prediction uncertainty is acceptable"
+shared_bottleneck,f3,naive,reroute_f3_path_1,"['n2', 'n5', 'n6']","['n2', 'n4', 'n5', 'n6']",0.275,,,1.0,-0.725,accept,First valid alternate route selected
+shared_bottleneck,f3,prediction_only,reroute_f3_path_2,"['n2', 'n5', 'n6']","['n2', 'n1', 'n3', 'n4', 'n5', 'n6']",0.275,0.155736,0.311473,0.4375,-0.16249999999999998,accept,Action with lowest predicted risk selected
+shared_bottleneck,f3,twinshield,reroute_f3_path_2,"['n2', 'n5', 'n6']","['n2', 'n1', 'n3', 'n4', 'n5', 'n6']",0.275,0.155736,0.311473,0.4375,-0.16249999999999998,abstain,Target-flow prediction uncertainty is too high

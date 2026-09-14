@@ -1,0 +1,19 @@
+scenario_id,flow_id,action_id,old_path,new_path,risk_before,actual_risk_after,predicted_risk_after,uncertainty,confidence,actual_risk_reduction,decision,reason
+background_surge,f1,reroute_f1_path_1,"['n1', 'n2', 'n4']","['n1', 'n3', 'n4']",0.4733,0.34,0.128334,0.256669,0.743331,0.13329999999999997,accept,"Target flow improves, all protected flows remain safe, and prediction uncertainty is acceptable"
+background_surge,f1,reroute_f1_path_2,"['n1', 'n2', 'n4']","['n1', 'n2', 'n5', 'n4']",0.4733,1.0,0.999481,0.001038,0.998962,-0.5267,reject,Target flow does not improve
+background_surge,f2,reroute_f2_path_1,"['n1', 'n3', 'n4']","['n1', 'n2', 'n4']",0.2833,1.0,0.994702,0.010596,0.989404,-0.7167,reject,Target flow does not improve
+background_surge,f2,reroute_f2_path_2,"['n1', 'n3', 'n4']","['n1', 'n2', 'n5', 'n4']",0.2833,1.0,0.997174,0.005652,0.994348,-0.7167,reject,Target flow does not improve
+background_surge,f3,reroute_f3_path_1,"['n2', 'n5', 'n6']","['n2', 'n4', 'n5', 'n6']",1.0,1.0,0.998153,0.003693,0.996307,0.0,reject,Protected flow safety constraint violated
+background_surge,f3,reroute_f3_path_2,"['n2', 'n5', 'n6']","['n2', 'n1', 'n3', 'n4', 'n5', 'n6']",1.0,0.4375,0.155736,0.311473,0.688527,0.5625,abstain,Target-flow prediction uncertainty is too high
+normal,f1,reroute_f1_path_1,"['n1', 'n2', 'n4']","['n1', 'n3', 'n4']",0.4733,0.34,0.128334,0.256669,0.743331,0.13329999999999997,accept,"Target flow improves, all protected flows remain safe, and prediction uncertainty is acceptable"
+normal,f1,reroute_f1_path_2,"['n1', 'n2', 'n4']","['n1', 'n2', 'n5', 'n4']",0.4733,0.56,0.222027,0.444054,0.555946,-0.08670000000000005,abstain,Target-flow prediction uncertainty is too high
+normal,f2,reroute_f2_path_1,"['n1', 'n3', 'n4']","['n1', 'n2', 'n4']",0.2833,1.0,0.994702,0.010596,0.989404,-0.7167,reject,Target flow does not improve
+normal,f2,reroute_f2_path_2,"['n1', 'n3', 'n4']","['n1', 'n2', 'n5', 'n4']",0.2833,0.4667,0.05248,0.104959,0.895041,-0.1834,abstain,Protected-flow prediction uncertainty is too high
+normal,f3,reroute_f3_path_1,"['n2', 'n5', 'n6']","['n2', 'n4', 'n5', 'n6']",0.275,1.0,0.998153,0.003693,0.996307,-0.725,reject,Target flow does not improve
+normal,f3,reroute_f3_path_2,"['n2', 'n5', 'n6']","['n2', 'n1', 'n3', 'n4', 'n5', 'n6']",0.275,0.4375,0.155736,0.311473,0.688527,-0.16249999999999998,abstain,Target-flow prediction uncertainty is too high
+shared_bottleneck,f1,reroute_f1_path_1,"['n1', 'n2', 'n4']","['n1', 'n3', 'n4']",1.0,0.34,0.128334,0.256669,0.743331,0.6599999999999999,accept,"Target flow improves, all protected flows remain safe, and prediction uncertainty is acceptable"
+shared_bottleneck,f1,reroute_f1_path_2,"['n1', 'n2', 'n4']","['n1', 'n2', 'n5', 'n4']",1.0,0.56,0.222027,0.444054,0.555946,0.43999999999999995,abstain,Target-flow prediction uncertainty is too high
+shared_bottleneck,f2,reroute_f2_path_1,"['n1', 'n3', 'n4']","['n1', 'n2', 'n4']",0.2833,1.0,0.994702,0.010596,0.989404,-0.7167,reject,Target flow does not improve
+shared_bottleneck,f2,reroute_f2_path_2,"['n1', 'n3', 'n4']","['n1', 'n2', 'n5', 'n4']",0.2833,0.4667,0.05248,0.104959,0.895041,-0.1834,accept,"Target flow improves, all protected flows remain safe, and prediction uncertainty is acceptable"
+shared_bottleneck,f3,reroute_f3_path_1,"['n2', 'n5', 'n6']","['n2', 'n4', 'n5', 'n6']",0.275,1.0,0.998153,0.003693,0.996307,-0.725,reject,Target flow does not improve
+shared_bottleneck,f3,reroute_f3_path_2,"['n2', 'n5', 'n6']","['n2', 'n1', 'n3', 'n4', 'n5', 'n6']",0.275,0.4375,0.155736,0.311473,0.688527,-0.16249999999999998,abstain,Target-flow prediction uncertainty is too high

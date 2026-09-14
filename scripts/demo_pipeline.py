@@ -1,13 +1,39 @@
+
+"""
+Demonstration of the TWINSHIELD uncertainty-aware
+decision pipeline using the trained calibrated model.
+"""
+from pathlib import Path
 from actions.action_schema import ReroutingAction
 from decision.pipeline import DecisionPipeline
+from models.predictor import load_model
 from simulation.network_state import create_initial_network_state
 
 
+MODEL_PATH = Path(
+    "models/artifacts/"
+    "twinshield_calibrated_baseline.joblib"
+)
+
+
 def main():
-    # Create the initial network state
+    # ---------------------------------------------------------
+    # 1. Create the initial network state
+    # ---------------------------------------------------------
     network_state = create_initial_network_state()
 
-    # Define a rerouting action for flow f1
+    # ---------------------------------------------------------
+    # 2. Load the trained calibrated prediction model
+    # ---------------------------------------------------------
+    print("Loading trained TWINSHIELD model...")
+
+    model = load_model(MODEL_PATH)
+
+    print("Model loaded successfully.")
+
+    # ---------------------------------------------------------
+    # 3. Define a candidate rerouting action
+    # ---------------------------------------------------------
     action = ReroutingAction(
         action_id="demo_action_001",
         target_flow="f1",
@@ -15,14 +41,24 @@ def main():
         new_path=["n1", "n3", "n4"],
     )
 
-    # Create the decision pipeline
-    pipeline = DecisionPipeline(network_state=network_state)
+    # ---------------------------------------------------------
+    # 4. Create the decision pipeline WITH the model
+    # ---------------------------------------------------------
+    pipeline = DecisionPipeline(
+        network_state=network_state,
+        model=model,
+    )
 
-    # Evaluate the proposed action
+    # ---------------------------------------------------------
+    # 5. Evaluate the proposed action
+    # ---------------------------------------------------------
     result = pipeline.evaluate(action)
 
+    # ---------------------------------------------------------
+    # 6. Display the result
+    # ---------------------------------------------------------
     print("\n" + "=" * 60)
-    print("TWINSHIELD DECISION PIPELINE DEMONSTRATION")
+    print("TWINSHIELD UNCERTAINTY-AWARE DECISION DEMONSTRATION")
     print("=" * 60)
 
     print("\nACTION DETAILS")
@@ -61,22 +97,50 @@ def main():
 
     print("\nEVALUATION TYPE")
     print("-" * 60)
+
     evaluation = result.get("evaluation", {})
+
     print(f"Evaluation:      {evaluation.get('evaluation_type')}")
     print(f"Success:         {evaluation.get('success')}")
 
     print("\nDETAILED PREDICTED OUTCOMES")
     print("-" * 60)
 
-    predicted_outcomes = evaluation.get("predicted_outcomes", {})
+    predicted_outcomes = evaluation.get(
+        "predicted_outcomes",
+        {}
+    )
 
     for flow_id, outcome in predicted_outcomes.items():
         print(f"\nFlow: {flow_id}")
-        print(f"  Predicted delay:       {outcome.get('delay')} ms")
-        print(f"  Predicted packet loss: {outcome.get('packet_loss')}")
-        print(f"  SLA violation risk:    {outcome.get('sla_violation_risk')}")
-        print(f"  Risk category:         {outcome.get('risk_category')}")
-        print(f"  Uncertainty:           {outcome.get('uncertainty_score')}")
+        print(
+            f"  Predicted delay:       "
+            f"{outcome.get('delay')} ms"
+        )
+        print(
+            f"  Predicted packet loss: "
+            f"{outcome.get('packet_loss')}"
+        )
+        print(
+            f"  SLA violation risk:    "
+            f"{outcome.get('sla_violation_risk')}"
+        )
+        print(
+            f"  Risk category:         "
+            f"{outcome.get('risk_category')}"
+        )
+        print(
+            f"  Uncertainty:           "
+            f"{outcome.get('uncertainty_score')}"
+        )
+        print(
+            f"  Confidence:            "
+            f"{outcome.get('confidence_score')}"
+        )
+        print(
+            f"  Prediction status:     "
+            f"{outcome.get('decision_status')}"
+        )
 
     print("\n" + "=" * 60)
     print("DEMONSTRATION COMPLETE")
@@ -85,3 +149,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
