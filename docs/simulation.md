@@ -1,69 +1,79 @@
-# Simulation Specification
+# TWINSHIELD Simulation Environment
 
 ## 1. Purpose
 
-The NetTwinAI simulation represents a dynamic computer network in which network traffic, topology, routing conditions, and resource utilization change over time.
+The simulation environment generates network states and telemetry for training the prediction models and evaluating network-control actions.
 
-The simulator will generate different network conditions and measure their impact on service performance.
+It should represent a small multi-flow network where congestion, SLA violations, and alternate-path rerouting can be studied.
 
-The generated simulation data will be used to develop and evaluate an **Explainable Digital Twin Framework for Predictive Network Service Degradation**.
+## 2. Initial Scope
 
-The primary objective is to move network management from a reactive approach, where degradation is detected after it occurs, towards a predictive approach that identifies potential degradation before significant service impact occurs.
+The initial simulation will use:
 
-The simulation will support:
+- A small network of approximately 4–8 nodes.
+- Multiple concurrent traffic flows.
+- Shared bottleneck links.
+- Configurable link capacities, delays, and queue sizes.
+- Multiple possible routes between selected nodes.
+- Fixed observation intervals.
+- A prediction horizon of approximately 5 future time steps.
 
-- Network state generation
-- Dynamic traffic conditions
-- Network service degradation
-- Machine Learning-based prediction
-- Explainable AI-based analysis
-- Preventive action recommendation
-- Digital Twin-based action evaluation
+The simulator may use **ns-3 or Mininet**, depending on implementation feasibility.
 
----
+## 3. Initial Scenarios
 
-## 2. Network Environment
+The simulator should support the following scenarios:
 
-The simulated environment consists of multiple interconnected network devices and end hosts.
+### Normal Operation
 
-Initial development configuration:
+All flows operate below capacity, with no SLA violations.
 
-- Number of routers: 4
-- Number of end hosts: 6
-- Number of communication links: Multiple
-- Multiple possible paths between selected source and destination nodes
-- Variable link bandwidth
-- Dynamic network traffic
+### Shared Bottleneck
 
-The network topology may be expanded during development.
+Multiple flows share a congested link, causing increased delay, packet loss, or reduced throughput.
 
-Each network link has finite bandwidth and may experience changing utilization and congestion.
+### Background Traffic Surge
 
----
+A background flow increases its transmission rate and causes degradation in the target flow.
 
-## 3. Network Topology Model
+### Alternate Path Available
 
-The network consists of:
+The target flow experiences congestion while another feasible route is available.
 
-- Routers
-- End hosts
-- Communication links
-- Source-destination pairs
-- Alternative routing paths
+### No Safe Action
 
-Example topology:
+All alternate routes either fail feasibility checks, provide insufficient improvement, or cause another flow to violate its SLA.
 
-```text
-             ┌─────────────┐
-             │   Router 2  │
-             └──────┬──────┘
-                    │
-                    │
-┌─────────┐   ┌────┴──────┐   ┌─────────┐
-│  Host A │───│  Router 1 │───│ Router 4│─── Host B
-└─────────┘   └────┬───────┘   └────┬────┘
-                    │                │
-                    │                │
-             ┌──────┴──────┐         │
-             │   Router 3  │─────────┘
-             └─────────────┘
+## 4. Telemetry Collection
+
+At every observation time step, collect:
+
+- Timestamp
+- Scenario and episode ID
+- Link capacity
+- Link utilization
+- Queue occupancy
+- Queue delay
+- Per-flow throughput
+- Per-flow delay
+- Per-flow packet loss
+- Flow rate
+- Flow route
+- Flow priority
+- SLA thresholds
+- SLA-violation status
+- Congestion indicators
+
+## 5. Network State
+
+The simulator should provide a common `network_state` object:
+
+```python
+network_state = {
+    "timestamp": 120,
+    "episode_id": "episode_001",
+    "scenario_id": "shared_bottleneck",
+    "topology": {...},
+    "links": [...],
+    "flows": [...]
+}
